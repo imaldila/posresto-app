@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_posresto_app/data/datasources/auth_local_datasource.dart';
 import 'package:flutter_posresto_app/presentation/home/dashboard_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -7,6 +9,7 @@ import '../../core/components/buttons.dart';
 import '../../core/components/custom_text_field.dart';
 import '../../core/components/spaces.dart';
 import '../../core/constants/colors.dart';
+import 'bloc/login/login_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -44,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
           const SpaceHeight(24.0),
           const Center(
             child: Text(
-              'RESTO WITH BAHRI',
+              'RESTO APP',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -75,16 +78,51 @@ class _LoginPageState extends State<LoginPage> {
             obscureText: true,
           ),
           const SpaceHeight(24.0),
-          Button.filled(
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const DashboardPage(),
+          BlocListener<LoginBloc, LoginState>(
+            listener: (context, state) {
+              state.maybeWhen(
+                success: (authResponseModel) {
+                  AuthLocalDataSource().saveAuthData(authResponseModel);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DashboardPage(),
+                    ),
+                  );
+                },
+                error: (message) => ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(message),
+                    backgroundColor: AppColors.red,
+                  ),
                 ),
+                orElse: () {},
               );
             },
-            label: 'Masuk',
+            child: BlocBuilder<LoginBloc, LoginState>(
+              builder: (context, state) {
+                return state.maybeWhen(
+                  orElse: () {
+                    return Button.filled(
+                      onPressed: () {
+                        context.read<LoginBloc>().add(
+                              LoginEvent.login(
+                                email: emailController.text,
+                                password: passwordController.text,
+                              ),
+                            );
+                      },
+                      label: 'Masuk',
+                    );
+                  },
+                  loading: () {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
