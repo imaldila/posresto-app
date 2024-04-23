@@ -8,7 +8,7 @@ import 'package:flutter_posresto_app/presentation/auth/login_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'presentation/auth/bloc/login/login_bloc.dart';
-import 'presentation/home/dashboard_page.dart';
+import 'presentation/home/pages/dashboard_page.dart';
 
 void main() {
   runApp(const MyApp());
