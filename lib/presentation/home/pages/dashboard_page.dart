@@ -7,6 +7,7 @@ import 'package:flutter_posresto_app/data/models/response/auth_response_model.da
 import 'package:flutter_posresto_app/presentation/auth/bloc/logout/logout_bloc.dart';
 import 'package:flutter_posresto_app/presentation/auth/login_page.dart';
 import 'package:flutter_posresto_app/presentation/home/pages/home_page.dart';
+import 'package:flutter_posresto_app/presentation/setting/pages/sync_data_page.dart';
 
 import '../../../core/assets/assets.gen.dart';
 import '../widgets/nav_item.dart';
@@ -26,7 +27,7 @@ class _DashboardPageState extends State<DashboardPage> {
     const HomePage(),
     const Text('Profile Page'),
     const Text('Setting Page'),
-    const Text('Logout Page'),
+    const SyncDataPage(),
   ];
 
   void _onItemTapped(int index) {

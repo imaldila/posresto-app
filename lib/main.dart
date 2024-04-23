@@ -3,12 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_posresto_app/core/constants/colors.dart';
 import 'package:flutter_posresto_app/data/datasources/auth_local_datasource.dart';
 import 'package:flutter_posresto_app/data/datasources/auth_remote_datasource.dart';
+import 'package:flutter_posresto_app/data/datasources/product_local_datasource.dart';
+import 'package:flutter_posresto_app/data/datasources/product_remote_datasource.dart';
 import 'package:flutter_posresto_app/presentation/auth/bloc/logout/logout_bloc.dart';
 import 'package:flutter_posresto_app/presentation/auth/login_page.dart';
+import 'package:flutter_posresto_app/presentation/home/bloc/checkout/checkout_bloc.dart';
+import 'package:flutter_posresto_app/presentation/home/bloc/local_product/local_product_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'presentation/auth/bloc/login/login_bloc.dart';
 import 'presentation/home/pages/dashboard_page.dart';
+import 'presentation/setting/bloc/sync_product/sync_product_bloc.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,27 +32,38 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => LogoutBloc(AuthRemoteDataSource()),
         ),
+        BlocProvider(
+          create: (context) => SyncProductBloc(ProductRemoteDatasource()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              LocalProductBloc(ProductLocalDatasource.instance),
+        ),
+        BlocProvider(
+          create: (context) => CheckoutBloc(),
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
-            textTheme: GoogleFonts.quicksandTextTheme(
-              Theme.of(context).textTheme,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+          textTheme: GoogleFonts.quicksandTextTheme(
+            Theme.of(context).textTheme,
+          ),
+          appBarTheme: AppBarTheme(
+            color: AppColors.white,
+            elevation: 0,
+            titleTextStyle: GoogleFonts.quicksand(
+              color: AppColors.primary,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
-            appBarTheme: AppBarTheme(
-              color: AppColors.white,
-              elevation: 0,
-              titleTextStyle: GoogleFonts.quicksand(
-                color: AppColors.primary,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-              iconTheme: const IconThemeData(
-                color: AppColors.primary,
-              ),
-            )),
+            iconTheme: const IconThemeData(
+              color: AppColors.primary,
+            ),
+          ),
+        ),
         home: FutureBuilder(
           future: AuthLocalDataSource().isAuthDataExists(),
           builder: (context, snapshot) {
